@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <script src="https://code.jquery.com/jquery-1.11.0.min.js"></script>
+
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+        <!-- Optional theme -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+        <link rel="stylesheet" href="https://rawgit.com/lukaskral/bootstrap-table-filter/master/src/bootstrap-table-filter.css">
+        <script src="https://rawgit.com/lukaskral/bootstrap-table-filter/master/src/bootstrap-table-filter.js"></script>
+
+        <link rel="stylesheet" href="https://rawgit.com/wenzhixin/bootstrap-table/master/dist/bootstrap-table.min.css">
+        <script src="https://rawgit.com/wenzhixin/bootstrap-table/master/dist/bootstrap-table.min.js"></script>
+    </head>
+
+    <body>
+
+        <div id="filter-bar">
+        </div>
+
+        <table
+            id="tbl"
+            data-url="tbl_data.json"
+            data-click-to-select="true"
+            data-toolbar="#filter-bar"
+            data-show-toggle="true"
+            data-show-columns="true"
+            >
+            <thead>
+                <tr>
+                    <th data-field="id" data-align="right">Item ID</th>
+                    <th data-field="name" data-align="center">Item Name</th>
+                    <th data-field="price" data-align="">Item Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>0</td>
+                    <td>test0</td>
+                    <td>$0</td>
+                </tr>
+                <tr>
+                    <td>1</td>
+                    <td>test1</td>
+                    <td>$1</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>test2</td>
+                    <td>$2</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>test3</td>
+                    <td>$3</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <pre style="margin-top: 30px" id="log"></pre>
+
+        <script type="text/javascript">
+            $(function() {
+                $('#filter-bar').bootstrapTableFilter({
+                    filters: [
+                        {
+                            field: 'id',
+                            label: 'Item ID',
+                            type: 'int'
+                        },
+                        {
+                            field: 'name',
+                            label: 'Item Name',
+                            type: 'text',
+                            values: [{id: 1, label: 'Hello'}, {id: 2, label: 'Good morning'}, {id: 3, label: 'Hi!'}],
+                            //            source: 'data.json'
+                        },
+                        {
+                            field: 'price',
+                            label: 'Price',
+                            type: 'int',
+                            enabled: true
+                        }
+                    ],
+                    connectTo: '#tbl',
+                    onAll: function(name, args) {
+                        var d = new Date();
+                        $('#log').prepend(d.toLocaleString() + ': ' + name + "\n");
+                    },
+                    onSubmit: function(data) {
+                        var data = $('#filter-bar').bootstrapTableFilter('getData');
+                        var d = new Date();
+                        $('#log').prepend(d.toLocaleString() + ': ' + JSON.stringify(data) + "\n");
+                    }
+                });
+
+                $('#tbl').bootstrapTable()
+//                        .bootstrapTable('load', 'tbl_data.json')
+                        ;
+                console.log($('#tbl').bootstrapTable('getData'));
+            });
+
+        </script>
+
+    </body>
+
+</html>
