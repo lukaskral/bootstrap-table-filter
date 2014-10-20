@@ -28,7 +28,7 @@
             cnt++;
         });
         return $.isEmptyObject(data) ? val : data;
-    }
+    };
 
 
     // FILTER CLASS DEFINITION
