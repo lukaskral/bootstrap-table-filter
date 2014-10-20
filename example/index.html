@@ -26,12 +26,12 @@
           {
             field: 'id',
             label: 'ID',
-            type: 'float'
+            type: 'range'
           },
           {
             field: 'label',
             label: 'Label',
-            type: 'text',
+            type: 'ajaxSelect',
             source: 'numbers.json',
             enabled: true
           },
@@ -39,7 +39,7 @@
             field: 'role',
             label: 'Role',
             type: 'select',
-            values: [{id: 1, label: 'ahoj'}, {id: 2, label: 'nazdar'}, {id: 3, label: 'čau'}],
+            values: [{id: 'ROLE_ANONYMOUS', label: 'Anonymous'}, {id: 'ROLE_USER', label: 'User'}, {id: 'ROLE_ADMIN', label: 'Admin'}],
           }
         ],
         onAll: function(name, args) {

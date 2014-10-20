@@ -45,6 +45,9 @@
     };
 
     BootstrapTableFilter.DEFAULTS = {
+        filters: [],
+        connectTo: false,
+
         onAll: function(name, args) {
             return false;
         },
@@ -94,25 +97,24 @@
     };
 
     BootstrapTableFilter.FILTER_SOURCES = {
-        int: {
+        range: {
             search: false,
             rows: [
-                {id: 'lte', label: 'Less than <input type="text">'},
-                {id: 'gte', label: 'More than <input type="text">'},
-                {id: 'eq', label: 'Equals <input type="text">'}
+                {id: 'lte', label: 'Less than <input class="form-control" type="text">'},
+                {id: 'gte', label: 'More than <input class="form-control" type="text">'},
+                {id: 'eq', label: 'Equals <input class="form-control" type="text">'}
             ]
         },
-        float: {extend: 'int'},
-        text: {
+        ajaxSelect: {
             search: true,
             rows: [],
             rowsCallback: function(filter, searchPhrase) {
                 var that = this;
                 $.ajax(filter.source, {dataType: 'json', data: {q: searchPhrase}})
-                        .done(function(data) {
-                            that.clearFilterOptions(filter.field);
-                            that.fillFilterOptions(filter.field, data);
-                        });
+                .done(function(data) {
+                    that.clearFilterOptions(filter.field);
+                    that.fillFilterOptions(filter.field, data);
+                });
             }
         },
         select: {
@@ -127,10 +129,12 @@
                     });
                 }
                 this.clearFilterOptions(filter.field);
-                this.fillFilterOptions(filter.field, vals);
+                this.fillFilterOptions(filter.field, vals.slice(0, 20));
             }
         }
     };
+
+    BootstrapTableFilter.EXTERNALS = [];
 
     BootstrapTableFilter.prototype.init = function() {
         this.initContainer();
@@ -138,26 +142,27 @@
         this.initFilters();
         this.initRefreshButton();
         this.initFilterSelector();
+        this.initExternals();
     };
 
     BootstrapTableFilter.prototype.initContainer = function() {
         var that = this;
         this.$toolbar = $([
             '<div class="btn-toolbar">',
-            '<div class="btn-group btn-group-filter-main">',
-            '<button type="button" class="btn btn-default dropdown-toggle btn-filter" data-toggle="dropdown">',
-            '<span class="glyphicon glyphicon-filter"></span>',
-            '</button>',
-            '<ul class="dropdown-menu" role="menu">',
-            '</ul>',
-            '</div>',
-            '<div class="btn-group btn-group-filters">',
-            '</div>',
-            '<div class="btn-group btn-group-filter-refresh">',
-            '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
-            '<span class="glyphicon glyphicon-repeat"></span>',
-            '</button>',
-            '</div>',
+                '<div class="btn-group btn-group-filter-main">',
+                    '<button type="button" class="btn btn-default dropdown-toggle btn-filter" data-toggle="dropdown">',
+                        '<span class="glyphicon glyphicon-filter"></span>',
+                    '</button>',
+                    '<ul class="dropdown-menu" role="menu">',
+                    '</ul>',
+                '</div>',
+                '<div class="btn-group btn-group-filters">',
+                '</div>',
+                '<div class="btn-group btn-group-filter-refresh">',
+                    '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
+                        '<span class="glyphicon glyphicon-repeat"></span>',
+                    '</button>',
+                '</div>',
             '</div>'
         ].join(''));
         this.$toolbar.appendTo(this.$el);
@@ -263,6 +268,13 @@
         });
     };
 
+    BootstrapTableFilter.prototype.initExternals = function() {
+        var that = this;
+        $.each(BootstrapTableFilter.EXTERNALS, function(i, ext) {
+            ext.call(that);
+        });
+    }
+
     BootstrapTableFilter.prototype.getFilter = function(field) {
         if (typeof this.filters[field] === 'undefined') {
             throw 'Invalid filter ' + field;
@@ -292,6 +304,7 @@
     BootstrapTableFilter.prototype.fillFilterOptions = function(field, data, cls) {
         var that = this;
         var filter = this.getFilter(field);
+        cls = cls || '';
         var option, checked;
         $.each(data, function(i, row) {
             option = rowId(row);
@@ -343,12 +356,12 @@
         var filter = this.getFilter(field);
         var $filterDropdown = $([
             '<div class="btn-group" data-filter-field="' + field + '">',
-            '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">',
-            filter.label,
-            ' <span class="caret"></span>',
-            '</button>',
-            '<ul class="dropdown-menu" role="menu">',
-            '</ul>',
+                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">',
+                    filter.label,
+                    ' <span class="caret"></span>',
+                '</button>',
+                '<ul class="dropdown-menu" role="menu">',
+                '</ul>',
             '</div>'
         ].join(''));
         $filterDropdown.appendTo(this.$filters);
@@ -448,6 +461,8 @@
     // =======================
 
     $.fn.bootstrapTableFilter = function(option, _relatedTarget) {
+        BootstrapTableFilter.externals = this.externals;
+
         var allowedMethods = [
             'addFilter', 'removeFilter',
             'enableFilter', 'disableFilter',
@@ -455,13 +470,15 @@
             'getData', 'isSelected',
             'resetView'
         ],
-                value;
+        value;
 
         this.each(function() {
             var $this = $(this),
-                    data = $this.data('bootstrap.tableFilter'),
-                    options = $.extend({}, BootstrapTableFilter.DEFAULTS, $this.data(),
-                            typeof option === 'object' && option);
+                data = $this.data('bootstrap.tableFilter'),
+                options = $.extend(
+                    {}, BootstrapTableFilter.DEFAULTS, $this.data(),
+                    typeof option === 'object' && option
+                );
 
             if (typeof option === 'string') {
                 if ($.inArray(option, allowedMethods) < 0) {
@@ -490,6 +507,7 @@
     $.fn.bootstrapTableFilter.Constructor = BootstrapTableFilter;
     $.fn.bootstrapTableFilter.defaults = BootstrapTableFilter.DEFAULTS;
     $.fn.bootstrapTableFilter.columnDefaults = BootstrapTableFilter.COLUMN_DEFAULTS;
+    $.fn.bootstrapTableFilter.externals = BootstrapTableFilter.EXTERNALS;
 
     // BOOTSTRAP TABLE FILTER INIT
     // =======================
