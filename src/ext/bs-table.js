@@ -40,7 +40,7 @@
             ret[field] = $.extend(ret[field], getTypeByValues(def.values));
         });
         return ret;
-    }
+    };
 
     $.fn.bootstrapTableFilter.externals.push(function() {
         if (this.options.connectTo) {
