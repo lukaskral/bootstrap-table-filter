@@ -103,7 +103,19 @@
                 {id: 'lte', label: 'Less than <input class="form-control" type="text">'},
                 {id: 'gte', label: 'More than <input class="form-control" type="text">'},
                 {id: 'eq', label: 'Equals <input class="form-control" type="text">'}
-            ]
+            ],
+            check: function(filterData, value) {
+                if (typeof filterData.lte !== 'undefined' && parseInt(value) > parseInt(filterData.lte)) {
+                    return false;
+                }
+                if (typeof filterData.gte !== 'undefined' && parseInt(value) < parseInt(filterData.gte)) {
+                    return false;
+                }
+                if (typeof filterData.eq !== 'undefined' && parseInt(value) != parseInt(filterData.eq)) {
+                    return false;
+                }
+                return true;
+            }
         },
         ajaxSelect: {
             search: true,
@@ -294,6 +306,16 @@
             ret = $.extend({}, ret, this.getFilterType(null, ret.extend));
         }
         return ret;
+    };
+    BootstrapTableFilter.prototype.checkFilterTypeValue = function(filterType, filterData, value) {
+        if (typeof filterType.check === 'function') {
+            return filterType.check(filterData, value);
+        }
+        else {
+            if (typeof filterData._values !== 'undefined') {
+                return $.inArray(value, filterData._values) >= 0;
+            }
+        }
     };
 
     BootstrapTableFilter.prototype.clearFilterOptions = function(field) {
