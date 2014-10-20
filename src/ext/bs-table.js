@@ -4,6 +4,7 @@
 
     var filterData = {};
     var bootstrapTableFilter;
+    var serverUrl;
 
     var getTypeByValues = function(vals, useAjax) {
         var typeFloat = true, typeInt = true;
@@ -72,11 +73,23 @@
             $.each(filters, function(field, filter) {
                 bootstrapTableFilter.addFilter(filter);
             });
-            $bootstrapTable.bootstrapTable('registerSearchCallback', rowFilter);
-            this.$el.on('submit.bs.table.filter', function(data) {
-                filterData = bootstrapTableFilter.getData();
-                $bootstrapTable.bootstrapTable('updateSearch');
-            });
+            serverUrl = $bootstrapTable.bootstrapTable('getServerUrl');
+            if (serverUrl) {
+                this.$el.on('submit.bs.table.filter', function() {
+                    filterData = bootstrapTableFilter.getData();
+                    var delimiter = serverUrl.indexOf('?') < 0 ? '?' : '&';
+                    var url = serverUrl + delimiter + 'filter=' + encodeURIComponent(JSON.stringify(filterData));
+                    console.log(url);
+                    $bootstrapTable.bootstrapTable('updateSearch');
+                });
+            }
+            else {
+                $bootstrapTable.bootstrapTable('registerSearchCallback', rowFilter);
+                this.$el.on('submit.bs.table.filter', function() {
+                    filterData = bootstrapTableFilter.getData();
+                    $bootstrapTable.bootstrapTable('updateSearch');
+                });
+            }
         }
     });
 
