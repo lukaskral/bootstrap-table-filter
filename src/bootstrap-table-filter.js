@@ -443,8 +443,12 @@
             filter.selectedOptions._values = filter.selectedOptions._values.filter(function(item) {
                 return item != option
             });
-            if (filter.selectedOptions._values.length == 0)
+            if (filter.selectedOptions._values.length == 0) {
                 delete filter.selectedOptions._values;
+            }
+            if ($.isEmptyObject(filter.selectedOptions)) {
+                delete filter.selectedOptions;
+            }
         }
         this.trigger('unselect-filter-option', field, option);
     };
