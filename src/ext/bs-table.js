@@ -2,6 +2,9 @@
 
     'use strict';
 
+    var filterData = {};
+    var bootstrapTableFilter;
+
     var getTypeByValues = function(vals, useAjax) {
         var typeFloat = true, typeInt = true;
         $.each(vals, function(i, val) {
@@ -41,19 +44,38 @@
         });
         return ret;
     };
+    var rowFilter = function(item, i) {
+        var filterType;
+        var ret = true;
+        $.each(item, function(field, value) {
+            filterType = false;
+            try {
+                filterType = bootstrapTableFilter.getFilterType(field);
+                if (filterType && typeof filterData[field] !== 'undefined') {
+                    ret = ret && bootstrapTableFilter.checkFilterTypeValue(filterType, filterData[field], value);
+                }
+            }
+            catch (e) {}
+        });
+        return ret;
+    };
 
     $.fn.bootstrapTableFilter.externals.push(function() {
         if (this.options.connectTo) {
-            var that = this;
-            var $table = $(this.options.connectTo);
-            var data = $table.bootstrapTable('getData');
-            var cols = $table.bootstrapTable('getColumns');
-            console.log(cols);
+            bootstrapTableFilter = this;
+            var $bootstrapTable = $(this.options.connectTo);
+            var data = $bootstrapTable.bootstrapTable('getData');
+            var cols = $bootstrapTable.bootstrapTable('getColumns');
             var dataSourceServer = false;
             var filters = getCols(cols, data, dataSourceServer);
 
             $.each(filters, function(field, filter) {
-                that.addFilter(filter);
+                bootstrapTableFilter.addFilter(filter);
+            });
+            $bootstrapTable.bootstrapTable('registerSearchCallback', rowFilter);
+            this.$el.on('submit.bs.table.filter', function(data) {
+                filterData = bootstrapTableFilter.getData();
+                $bootstrapTable.bootstrapTable('updateSearch');
             });
         }
     });
