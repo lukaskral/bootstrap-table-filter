@@ -122,11 +122,14 @@
             rows: [],
             rowsCallback: function(filter, searchPhrase) {
                 var that = this;
-                $.ajax(filter.source, {dataType: 'json', data: {q: searchPhrase}})
-                .done(function(data) {
-                    that.clearFilterOptions(filter.field);
-                    that.fillFilterOptions(filter.field, data);
-                });
+                clearTimeout(this.timeoutId_);
+                this.timeoutId_ = setTimeout(function() {
+                    $.ajax(filter.source, {dataType: 'json', data: {q: searchPhrase}})
+                    .done(function(data) {
+                        that.clearFilterOptions(filter.field);
+                        that.fillFilterOptions(filter.field, data);
+                    });
+                }, 300);
             }
         },
         select: {
