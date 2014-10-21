@@ -180,6 +180,10 @@
         this.$toolbar.appendTo(this.$el);
         this.$filters = this.$toolbar.find('.btn-group-filters');
 
+        this.$toolbar.delegate('.btn-group-filters li', 'click', function (e) {
+            e.stopImmediatePropagation();
+        });
+
         this.$toolbar.delegate('.btn-group-filters li .filter-enabled', 'click', function(e) {
             var $chck = $(this);
             var field = $chck.closest('[data-filter-field]').attr('data-filter-field');
@@ -239,7 +243,7 @@
 
     BootstrapTableFilter.prototype.initFilters = function() {
         var that = this;
-        this.$buttonList.append('<li class="remove-filters"><a href="#"><span class="glyphicon glyphicon-remove"></span> Remove all filters</a></li>');
+        this.$buttonList.append('<li class="remove-filters"><a href="javascript:void(0)"><span class="glyphicon glyphicon-remove"></span> Remove all filters</a></li>');
         this.$buttonList.append('<li class="divider"></li>');
         $.each(this.options.filters, function(i, filter) {
             that.addFilter(filter);
@@ -331,7 +335,7 @@
         $.each(data, function(i, row) {
             option = rowId(row);
             checked = that.isSelected(field, option);
-            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="#"><input type="checkbox" class="filter-enabled"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
+            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
         });
     };
 
@@ -360,7 +364,7 @@
 
     BootstrapTableFilter.prototype.addFilter = function(filter) {
         this.filters[filter.field] = filter;
-        this.$buttonList.append('<li data-filter-field="' + filter.field + '"><a href="#"><input type="checkbox"> ' + filter.label + '</a></li>');
+        this.$buttonList.append('<li data-filter-field="' + filter.field + '"><a href="javascript:void(0)"><input type="checkbox"> ' + filter.label + '</a></li>');
 
         this.trigger('add-filter', filter);
         if (typeof filter.enabled !== 'undefined' && filter.enabled) {
