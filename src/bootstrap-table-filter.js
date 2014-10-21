@@ -117,6 +117,38 @@
                 return true;
             }
         },
+        search: {
+            search: false,
+            rows: [
+                {id: 'eq', label: 'Equals <input class="form-control" type="text">'},
+                {id: 'neq', label: 'Not equals <input class="form-control" type="text">'},
+                {id: 'cnt', label: 'Contains <input class="form-control" type="text">'},
+                {id: 'ncnt', label: 'Doesn\'t contain <input class="form-control" type="text">'},
+                {id: 'ept', label: 'Is empty'},
+                {id: 'nept', label: 'Is not empty'}
+            ],
+            check: function(filterData, value) {
+                if (typeof filterData.eq !== 'undefined' && value != filterData.eq) {
+                    return false;
+                }
+                if (typeof filterData.neq !== 'undefined' && value == filterData.neq) {
+                    return false;
+                }
+                if (typeof filterData.cnt !== 'undefined' && value.indexOf(filterData.cnt) < 0) {
+                    return false;
+                }
+                if (typeof filterData.ncnt !== 'undefined' && value.indexOf(filterData.ncnt) >= 0) {
+                    return false;
+                }
+                if (typeof filterData._values !== 'undefined' && filterData._values.indexOf('ept') >= 0 && value.trim()) {
+                    return false;
+                }
+                if (typeof filterData._values !== 'undefined' && filterData._values.indexOf('nept') >= 0 && !value.trim()) {
+                    return false;
+                }
+                return true;
+            }
+        },
         ajaxSelect: {
             search: true,
             rows: [],

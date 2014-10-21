@@ -22,7 +22,7 @@
         if (serverUrl) {
             var delimiter = serverUrl.indexOf('?') < 0 ? '?' : '&';
             return {
-                type: 'ajaxSelect',
+                type: 'search',
                 source: serverUrl + delimiter + 'resourceFor=' + filter.field
             };
         }
