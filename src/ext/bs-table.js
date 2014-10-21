@@ -83,7 +83,6 @@
                     filterData = bootstrapTableFilter.getData();
                     var delimiter = serverUrl.indexOf('?') < 0 ? '?' : '&';
                     var url = serverUrl + delimiter + 'filter=' + encodeURIComponent(JSON.stringify(filterData));
-//                    console.log(url);
                     $bootstrapTable.bootstrapTable('refresh', {url: url});
                 });
             }
