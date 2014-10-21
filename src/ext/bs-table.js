@@ -6,9 +6,9 @@
     var bootstrapTableFilter;
     var serverUrl;
 
-    var getTypeByValues = function(vals, useAjax) {
+    var getTypeByValues = function(filter) {
         var typeFloat = true, typeInt = true;
-        $.each(vals, function(i, val) {
+        $.each(filter.values, function(i, val) {
             if (typeInt && (parseInt(val) != val)) {
                 typeInt = false;
             }
@@ -19,8 +19,12 @@
         if (typeInt || typeFloat) {
             return {type: 'range'};
         }
-        if (useAjax) {
-            return {type: 'selectAjax', source: 'XXXXX'}
+        if (serverUrl) {
+            var delimiter = serverUrl.indexOf('?') < 0 ? '?' : '&';
+            return {
+                type: 'ajaxSelect',
+                source: serverUrl + delimiter + 'resourceFor=' + filter.field
+            };
         }
         return {type: 'select'};
     };
@@ -41,7 +45,7 @@
             });
         });
         $.each(ret, function(field, def) {
-            ret[field] = $.extend(ret[field], getTypeByValues(def.values));
+            ret[field] = $.extend(ret[field], getTypeByValues(def));
         });
         return ret;
     };
@@ -67,20 +71,20 @@
             var $bootstrapTable = $(this.options.connectTo);
             var data = $bootstrapTable.bootstrapTable('getData');
             var cols = $bootstrapTable.bootstrapTable('getColumns');
+            serverUrl = $bootstrapTable.bootstrapTable('getServerUrl');
             var dataSourceServer = false;
             var filters = getCols(cols, data, dataSourceServer);
 
             $.each(filters, function(field, filter) {
                 bootstrapTableFilter.addFilter(filter);
             });
-            serverUrl = $bootstrapTable.bootstrapTable('getServerUrl');
             if (serverUrl) {
                 this.$el.on('submit.bs.table.filter', function() {
                     filterData = bootstrapTableFilter.getData();
                     var delimiter = serverUrl.indexOf('?') < 0 ? '?' : '&';
                     var url = serverUrl + delimiter + 'filter=' + encodeURIComponent(JSON.stringify(filterData));
 //                    console.log(url);
-                    $bootstrapTable.bootstrapTable('updateSearch');
+                    $bootstrapTable.bootstrapTable('refresh', {url: url});
                 });
             }
             else {
