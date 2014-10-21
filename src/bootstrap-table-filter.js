@@ -287,7 +287,8 @@
         });
         this.$toolbar.delegate('.remove-filters *', 'click', function() {
             $.each(that.filters, function(i, filter) {
-                that.disableFilter(filter.field)
+                that.disableFilter(filter.field);
+                that.toggleRefreshButton(true);
             });
         });
     };
