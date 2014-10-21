@@ -207,7 +207,7 @@
                 '</div>',
                 '<div class="btn-group btn-group-filter-refresh">',
                     '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
-                        '<span class="glyphicon glyphicon-repeat"></span>',
+                        '<span class="glyphicon glyphicon-ok"></span>',
                     '</button>',
                 '</div>',
             '</div>'
@@ -273,7 +273,9 @@
         this.$refreshButton = this.$toolbar.find('.btn-refresh');
         this.$refreshButton.click(function(e) {
             that.trigger('submit', that.getData());
+            that.toggleRefreshButton(false);
         });
+        this.toggleRefreshButton(false);
     };
 
     BootstrapTableFilter.prototype.initFilters = function() {
@@ -360,6 +362,7 @@
     BootstrapTableFilter.prototype.clearFilterOptions = function(field) {
         var filter = this.getFilter(field);
         filter.$dropdownList.find('li:not(.static)').remove();
+        this.toggleRefreshButton(true);
     };
 
     BootstrapTableFilter.prototype.fillFilterOptions = function(field, data, cls) {
@@ -471,6 +474,7 @@
             filter.selectedOptions._values.push(option);
         }
         this.trigger('select-filter-option', field, option, data);
+        this.toggleRefreshButton(true);
     };
 
     BootstrapTableFilter.prototype.unselectFilterOption = function(field, option) {
@@ -490,6 +494,11 @@
             }
         }
         this.trigger('unselect-filter-option', field, option);
+        this.toggleRefreshButton(true);
+    };
+
+    BootstrapTableFilter.prototype.toggleRefreshButton = function(show) {
+        this.$refreshButton.toggle(show);
     };
 
     BootstrapTableFilter.prototype.isSelected = function(field, option, value) {
@@ -532,6 +541,7 @@
             'addFilter', 'removeFilter',
             'enableFilter', 'disableFilter',
             'selectFilterOption', 'unselectFilterOption',
+            'toggleRefreshButton',
             'getData', 'isSelected',
             'resetView'
         ],
