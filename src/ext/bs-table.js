@@ -73,7 +73,7 @@
             var cols = $bootstrapTable.bootstrapTable('getColumns');
             serverUrl = $bootstrapTable.bootstrapTable('getServerUrl');
             var dataSourceServer = false;
-            var filters = getCols(cols, data, dataSourceServer);
+            var filters = this.options.filters.length ? [] : getCols(cols, data, dataSourceServer);
 
             $.each(filters, function(field, filter) {
                 bootstrapTableFilter.addFilter(filter);
