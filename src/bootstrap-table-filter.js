@@ -5,7 +5,14 @@
     // TOOLS DEFINITION
     // ======================
     var rowLabel = function(el) {
-        return typeof el === 'object' ? el.label : el;
+        var ret = el;
+        if (typeof el === 'object') {
+            ret = el.label;
+            if (typeof el.i18n === 'object') {
+                $.each(el.i18n, function(key, val) { ret = ret.replace('{%' + key + '}', val) });
+            }
+        }
+        return ret;
     };
     var rowId = function(el) {
         return typeof el === 'object' ? el.id : el;
@@ -47,6 +54,17 @@
     BootstrapTableFilter.DEFAULTS = {
         filters: [],
         connectTo: false,
+
+        filterIcon: '<span class="glyphicon glyphicon-filter"></span>',
+        refreshIcon: '<span class="glyphicon glyphicon-ok"></span>',
+        clearAllIcon: '<span class="glyphicon glyphicon-remove"></span>',
+
+        formatRemoveFiltersMessage: function() {
+            return 'Remove all filters';
+        },
+        formatSearchMessage: function() {
+            return 'Search';
+        },
 
         onAll: function(name, args) {
             return false;
@@ -100,9 +118,9 @@
         range: {
             search: false,
             rows: [
-                {id: 'lte', label: 'Less than <input class="form-control" type="text">'},
-                {id: 'gte', label: 'More than <input class="form-control" type="text">'},
-                {id: 'eq', label: 'Equals <input class="form-control" type="text">'}
+                {id: 'lte', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Less than'}},
+                {id: 'gte', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'More than'}},
+                {id: 'eq', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Equals'}}
             ],
             check: function(filterData, value) {
                 if (typeof filterData.lte !== 'undefined' && parseInt(value) > parseInt(filterData.lte)) {
@@ -120,12 +138,12 @@
         search: {
             search: false,
             rows: [
-                {id: 'eq', label: 'Equals <input class="form-control" type="text">'},
-                {id: 'neq', label: 'Not equals <input class="form-control" type="text">'},
-                {id: 'cnt', label: 'Contains <input class="form-control" type="text">'},
-                {id: 'ncnt', label: 'Doesn\'t contain <input class="form-control" type="text">'},
-                {id: 'ept', label: 'Is empty'},
-                {id: 'nept', label: 'Is not empty'}
+                {id: 'eq', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Equals'}},
+                {id: 'neq', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Not equals'}},
+                {id: 'cnt', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Contains'}},
+                {id: 'ncnt', label: '{%msg} <input class="form-control" type="text">', i18n: {msg: 'Doesn\'t contain'}},
+                {id: 'ept', label: '{%msg}', i18n: {msg: 'Is empty'}},
+                {id: 'nept', label: '{%msg}', i18n: {msg: 'Is not empty'}}
             ],
             check: function(filterData, value) {
                 if (typeof filterData.eq !== 'undefined' && value != filterData.eq) {
@@ -198,7 +216,7 @@
             '<div class="btn-toolbar">',
                 '<div class="btn-group btn-group-filter-main">',
                     '<button type="button" class="btn btn-default dropdown-toggle btn-filter" data-toggle="dropdown">',
-                        '<span class="glyphicon glyphicon-filter"></span>',
+                        this.options.filterIcon,
                     '</button>',
                     '<ul class="dropdown-menu" role="menu">',
                     '</ul>',
@@ -207,7 +225,7 @@
                 '</div>',
                 '<div class="btn-group btn-group-filter-refresh">',
                     '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
-                        '<span class="glyphicon glyphicon-ok"></span>',
+                        this.options.refreshIcon,
                     '</button>',
                 '</div>',
             '</div>'
@@ -280,7 +298,7 @@
 
     BootstrapTableFilter.prototype.initFilters = function() {
         var that = this;
-        this.$buttonList.append('<li class="remove-filters"><a href="javascript:void(0)"><span class="glyphicon glyphicon-remove"></span> Remove all filters</a></li>');
+        this.$buttonList.append('<li class="remove-filters"><a href="javascript:void(0)">' + this.options.clearAllIcon + ' ' + this.options.formatRemoveFiltersMessage() + '</a></li>');
         this.$buttonList.append('<li class="divider"></li>');
         $.each(this.options.filters, function(i, filter) {
             that.addFilter(filter);
@@ -438,7 +456,7 @@
 
         var fType = this.getFilterType(filter);
         if (fType.search) {
-            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values" placeholder="Search"></span></li>'));
+            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values" placeholder="' + this.options.formatSearchMessage() + '"></span></li>'));
             filter.$dropdownList.append($('<li class="static divider"></li>'));
         }
         if (fType.rows) {
@@ -555,6 +573,7 @@
                     {}, BootstrapTableFilter.DEFAULTS, $this.data(),
                     typeof option === 'object' && option
                 );
+                console.log(options);
 
             if (typeof option === 'string') {
                 if ($.inArray(option, allowedMethods) < 0) {
@@ -584,6 +603,7 @@
     $.fn.bootstrapTableFilter.defaults = BootstrapTableFilter.DEFAULTS;
     $.fn.bootstrapTableFilter.columnDefaults = BootstrapTableFilter.COLUMN_DEFAULTS;
     $.fn.bootstrapTableFilter.externals = BootstrapTableFilter.EXTERNALS;
+    $.fn.bootstrapTableFilter.filterSources = BootstrapTableFilter.FILTER_SOURCES;
 
     // BOOTSTRAP TABLE FILTER INIT
     // =======================
