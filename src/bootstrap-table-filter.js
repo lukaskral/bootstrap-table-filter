@@ -573,7 +573,6 @@
                     {}, BootstrapTableFilter.DEFAULTS, $this.data(),
                     typeof option === 'object' && option
                 );
-                console.log(options);
 
             if (typeof option === 'string') {
                 if ($.inArray(option, allowedMethods) < 0) {
