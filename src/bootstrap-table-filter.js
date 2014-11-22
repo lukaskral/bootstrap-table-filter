@@ -14,8 +14,8 @@
         }
         return ret;
     };
-    var rowId = function(el) {
-        return typeof el === 'object' ? el.id : el;
+    var rowId = function(id, el) {
+        return typeof el === 'object' ? el.id : id;
     };
     var getOptionData = function($option) {
         var val = false;
@@ -390,7 +390,7 @@
         cls = cls || '';
         var option, checked;
         $.each(data, function(i, row) {
-            option = rowId(row);
+            option = rowId(i, row);
             checked = that.isSelected(field, option);
             filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
         });
