@@ -462,6 +462,7 @@
         if (fType.rowsCallback) {
             fType.rowsCallback.call(this, filter, '');
         }
+        this.toggleRefreshButton(true);
         this.trigger('enable-filter', filter);
     };
 
@@ -470,7 +471,6 @@
         $.each(this.filters, function(i, filter) {
             that.disableFilter(filter.field);
         });
-        this.toggleRefreshButton(true);
     };
 
     BootstrapTableFilter.prototype.disableFilter = function(field) {
@@ -482,6 +482,7 @@
             delete filter.$dropdown;
             this.trigger('disable-filter', filter);
         }
+        this.toggleRefreshButton(true);
     };
 
     BootstrapTableFilter.prototype.selectFilterOption = function(field, option, data) {
