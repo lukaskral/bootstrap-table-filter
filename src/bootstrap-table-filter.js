@@ -304,10 +304,7 @@
             that.addFilter(filter);
         });
         this.$toolbar.delegate('.remove-filters *', 'click', function() {
-            $.each(that.filters, function(i, filter) {
-                that.disableFilter(filter.field);
-                that.toggleRefreshButton(true);
-            });
+            that.disableFilters();
         });
     };
 
@@ -468,6 +465,14 @@
         this.trigger('enable-filter', filter);
     };
 
+    BootstrapTableFilter.prototype.disableFilters = function() {
+        var that = this;
+        $.each(this.filters, function(i, filter) {
+            that.disableFilter(filter.field);
+        });
+        this.toggleRefreshButton(true);
+    };
+
     BootstrapTableFilter.prototype.disableFilter = function(field) {
         var filter = this.getFilter(field);
         this.$buttonList.find('[data-filter-field=' + field + '] input[type=checkbox]').prop('checked', false);
@@ -558,7 +563,7 @@
 
         var allowedMethods = [
             'addFilter', 'removeFilter',
-            'enableFilter', 'disableFilter',
+            'enableFilter', 'disableFilter', 'disableFilters',
             'selectFilterOption', 'unselectFilterOption',
             'toggleRefreshButton',
             'getData', 'isSelected',
