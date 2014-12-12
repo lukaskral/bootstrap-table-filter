@@ -522,6 +522,24 @@
         this.toggleRefreshButton(true);
     };
 
+    BootstrapTableFilter.prototype.setupFilter = function(field, options) {
+        var that = this;
+        this.enableFilter(field);
+        $.each(options, function(key, val) {
+            if (key === '_values') {
+                $.each(val, function(i, v) {
+                    that.selectFilterOption(field, v, false);
+                    $('div[data-filter-field="' + field + '"] [data-val="' + v + '"] input.filter-enabled').prop('checked', true);
+                });
+            }
+            else {
+                that.selectFilterOption(field, key, val);
+                $('div[data-filter-field="' + field + '"] [data-val="' + key + '"] input.filter-enabled').prop('checked', true);
+                $('div[data-filter-field="' + field + '"] [data-val="' + key + '"] input[type="text"]:not([data-name])').val(val);
+            }
+        });
+    };
+
     BootstrapTableFilter.prototype.toggleRefreshButton = function(show) {
         this.$refreshButton.toggle(show);
     };
@@ -566,6 +584,7 @@
             'addFilter', 'removeFilter',
             'enableFilter', 'disableFilter', 'disableFilters',
             'selectFilterOption', 'unselectFilterOption',
+            'setupFilter',
             'toggleRefreshButton',
             'getData', 'isSelected',
             'resetView'
