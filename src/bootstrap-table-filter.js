@@ -577,7 +577,7 @@
     // BOOTSTRAP FILTER TABLE PLUGIN DEFINITION
     // =======================
 
-    $.fn.bootstrapTableFilter = function(option, _relatedTarget) {
+    $.fn.bootstrapTableFilter = function(option, _relatedTarget, _param2) {
         BootstrapTableFilter.externals = this.externals;
 
         var allowedMethods = [
@@ -608,7 +608,7 @@
                     return;
                 }
 
-                value = data[option](_relatedTarget);
+                value = data[option](_relatedTarget, _param2);
 
                 if (option === 'destroy') {
                     $this.removeData('bootstrap.tableFilter');
