@@ -370,9 +370,10 @@
         }
         else {
             if (typeof filterData._values !== 'undefined') {
-                return $.inArray(value, filterData._values) >= 0;
+                return $.inArray("" + value, filterData._values) >= 0;
             }
         }
+        return true;
     };
 
     BootstrapTableFilter.prototype.clearFilterOptions = function(field) {

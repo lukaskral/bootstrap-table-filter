@@ -56,6 +56,10 @@
             filterType = false;
             try {
                 filterType = bootstrapTableFilter.getFilterType(field);
+                filter = bootstrapTableFilter.getFilter(field);
+                if (typeof filter.values !== 'undefined') {
+                    value = filter.values.indexOf(value);
+                }
                 if (filterType && typeof filterData[field] !== 'undefined') {
                     ret = ret && bootstrapTableFilter.checkFilterTypeValue(filterType, filterData[field], value);
                 }
