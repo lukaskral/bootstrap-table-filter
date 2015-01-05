@@ -31,11 +31,14 @@
     var getCols = function(cols, data, useAjax) {
         var ret = {};
         $.each(cols, function(i, col) {
-            ret[col.field] = {
-                field: col.field,
-                label: col.title,
-                values: []
-            };
+            if (col.filterable)
+            {
+                ret[col.field] = {
+                    field: col.field,
+                    label: col.title,
+                    values: []
+                };
+            }
         });
         $.each(data, function(i, row) {
             $.each(ret, function(field, filter) {
