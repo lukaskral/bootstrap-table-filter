@@ -1,0 +1,32 @@
+{
+  "name": "bootstrap-table-filter",
+  "version": "1.0.1",
+  "dependencies": {
+    "jquery": ">=1.9.1"
+  },
+  "authors": [
+    "hhurz",
+    "kayalshri"
+  ],
+  "description": "bootstrap-table-filter",
+  "main": "dist/bootstrap-table-filter.min.js",
+  "moduleType": [
+    "globals"
+  ],
+  "keywords": [
+    "html5",
+    "javascript",
+    "jquery",
+    "ui",
+    "framework",
+    "table",
+    "bootstrap"
+  ],
+  "ignore": [
+    "tools",
+    "test",
+    "libs",
+    "test",
+    "tests"
+  ]
+}
