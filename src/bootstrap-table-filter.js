@@ -59,6 +59,9 @@
         refreshIcon: '<span class="glyphicon glyphicon-ok"></span>',
         clearAllIcon: '<span class="glyphicon glyphicon-remove"></span>',
 
+        inputSize : 'input-sm',
+        buttonSize: 'btn-sm',
+
         formatRemoveFiltersMessage: function() {
             return 'Remove all filters';
         },
@@ -215,7 +218,7 @@
         this.$toolbar = $([
             '<div class="btn-toolbar">',
                 '<div class="btn-group btn-group-filter-main">',
-                    '<button type="button" class="btn btn-default dropdown-toggle btn-filter" data-toggle="dropdown">',
+                    '<button type="button" class="btn btn-default dropdown-toggle btn-filter ' + this.options.buttonSize + '" data-toggle="dropdown">',
                         this.options.filterIcon,
                     '</button>',
                     '<ul class="dropdown-menu" role="menu">',
@@ -224,7 +227,7 @@
                 '<div class="btn-group btn-group-filters">',
                 '</div>',
                 '<div class="btn-group btn-group-filter-refresh">',
-                    '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
+                    '<button type="button" class="btn btn-default btn-primary btn-refresh ' + this.options.buttonSize + '" data-toggle="dropdown">',
                         this.options.refreshIcon,
                     '</button>',
                 '</div>',
@@ -390,7 +393,7 @@
         $.each(data, function(i, row) {
             option = rowId(i, row);
             checked = that.isSelected(field, option);
-            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
+            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled ' + that.options.inputSize + '"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
         });
     };
 
@@ -437,7 +440,7 @@
         var filter = this.getFilter(field);
         var $filterDropdown = $([
             '<div class="btn-group" data-filter-field="' + field + '">',
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">',
+                '<button type="button" class="btn btn-default dropdown-toggle ' + this.options.buttonSize + '" data-toggle="dropdown">',
                     filter.label,
                     ' <span class="caret"></span>',
                 '</button>',
@@ -454,7 +457,7 @@
 
         var fType = this.getFilterType(filter);
         if (fType.search) {
-            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values" placeholder="' + this.options.formatSearchMessage() + '"></span></li>'));
+            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values  ' + this.options.inputSize + '" placeholder="' + this.options.formatSearchMessage() + '"></span></li>'));
             filter.$dropdownList.append($('<li class="static divider"></li>'));
         }
         if (fType.rows) {
