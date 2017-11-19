@@ -393,7 +393,7 @@
         $.each(data, function(i, row) {
             option = rowId(i, row);
             checked = that.isSelected(field, option);
-            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled ' + that.options.inputSize + '"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
+            filter.$dropdownList.append($('<li data-val="' + option + '" class="' + cls + '"><a href="javascript:void(0)"><input type="checkbox" class="filter-enabled"' + (checked ? ' checked' : '') + '> ' + rowLabel(row) + '</a></li>'));
         });
     };
 
