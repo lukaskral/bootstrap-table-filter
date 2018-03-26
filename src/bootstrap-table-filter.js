@@ -59,6 +59,9 @@
         refreshIcon: '<span class="glyphicon glyphicon-ok"></span>',
         clearAllIcon: '<span class="glyphicon glyphicon-remove"></span>',
 
+        inputSize : 'input-sm',
+        buttonSize: 'btn-sm',
+
         formatRemoveFiltersMessage: function() {
             return 'Remove all filters';
         },
@@ -173,7 +176,7 @@
             rowsCallback: function(filter, searchPhrase) {
                 var that = this;
                 clearTimeout(this.timeoutId_);
-                this.timeoutId_ = setTimeout(function() {
+                that.timeoutId_ = setTimeout(function() {
                     $.ajax(filter.source, {dataType: 'json', data: {q: searchPhrase}})
                     .done(function(data) {
                         that.clearFilterOptions(filter.field);
@@ -215,7 +218,7 @@
         this.$toolbar = $([
             '<div class="btn-toolbar">',
                 '<div class="btn-group btn-group-filter-main">',
-                    '<button type="button" class="btn btn-default dropdown-toggle btn-filter" data-toggle="dropdown">',
+                    '<button type="button" class="btn btn-default dropdown-toggle btn-filter ' + this.options.buttonSize + '" data-toggle="dropdown">',
                         this.options.filterIcon,
                     '</button>',
                     '<ul class="dropdown-menu" role="menu">',
@@ -224,7 +227,7 @@
                 '<div class="btn-group btn-group-filters">',
                 '</div>',
                 '<div class="btn-group btn-group-filter-refresh">',
-                    '<button type="button" class="btn btn-default btn-primary btn-refresh" data-toggle="dropdown">',
+                    '<button type="button" class="btn btn-default btn-primary btn-refresh ' + this.options.buttonSize + '" data-toggle="dropdown">',
                         this.options.refreshIcon,
                     '</button>',
                 '</div>',
@@ -251,13 +254,22 @@
             }
             e.stopImmediatePropagation();
         });
-        this.$toolbar.delegate('.btn-group-filters li :input:not(.filter-enabled)', 'click change', function(e) {
+        
+
+        // TODO Seçim kutusunda seçenek değiltirildiğinde refersh butonu çıkmıyordu.
+        // this.$toolbar.delegate('.btn-group-filters li :input:not(.filter-enabled)', 'click change', function(e) {
+
+        this.$toolbar.delegate('.btn-group-filters li :input', 'click change', function(e) {
             var $inp = $(this);
             var field = $inp.closest('[data-filter-field]').attr('data-filter-field');
             var $option = $inp.closest('[data-val]');
             var option = $option.attr('data-val');
             var $chck = $option.find('.filter-enabled');
-            if ($inp.val()) {
+
+            // TODO Seçim kutusunda seçenek değiltirildiğinde refersh butonu çıkmıyordu.
+            // if ($inp.val()) {
+
+            if ($inp.val() && $chck.prop('checked')) {
                 var data = getOptionData($option);
                 that.selectFilterOption(field, option, data);
                 $chck.prop('checked', true);
@@ -268,7 +280,10 @@
             }
             e.stopImmediatePropagation();
         });
-        this.$toolbar.delegate('.search-values', 'keyup', function(e) {
+        
+        // TODO keyup > keyup focus
+        this.$toolbar.delegate('.search-values', 'keyup focus', function(e) {
+            
             var $this = $(this);
             var phrase = $this.val();
             var field = $this.closest('[data-filter-field]').attr('data-filter-field');
@@ -277,6 +292,7 @@
             if (fType.rowsCallback) {
                 fType.rowsCallback.call(that, filter, phrase);
             }
+            
         });
     };
 
@@ -303,7 +319,9 @@
         $.each(this.options.filters, function(i, filter) {
             that.addFilter(filter);
         });
-        this.$toolbar.delegate('.remove-filters *', 'click', function() {
+        
+        // TODO edit toolbar -> buttonList
+        this.$buttonList.delegate('.remove-filters *', 'click', function() {
             that.disableFilters();
         });
     };
@@ -437,7 +455,7 @@
         var filter = this.getFilter(field);
         var $filterDropdown = $([
             '<div class="btn-group" data-filter-field="' + field + '">',
-                '<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">',
+                '<button type="button" class="btn btn-default dropdown-toggle ' + this.options.buttonSize + '" data-toggle="dropdown">',
                     filter.label,
                     ' <span class="caret"></span>',
                 '</button>',
@@ -454,7 +472,7 @@
 
         var fType = this.getFilterType(filter);
         if (fType.search) {
-            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values" placeholder="' + this.options.formatSearchMessage() + '"></span></li>'));
+            filter.$dropdownList.append($('<li class="static"><span><input type="text" class="form-control search-values ' + this.options.inputSize + '" placeholder="' + this.options.formatSearchMessage() + '"></span></li>'));
             filter.$dropdownList.append($('<li class="static divider"></li>'));
         }
         if (fType.rows) {
@@ -474,9 +492,19 @@
         });
     };
 
+            // burada düzenlemeler yapıldı
+            // Seçim kutusunda referesh hatası giderildi.
+            // https://github.com/lukaskral/bootstrap-table-filter/pull/31/commits/d120e0cb953c31254c1014dc23aa6f46aa8434c2
+
     BootstrapTableFilter.prototype.disableFilter = function(field) {
         var filter = this.getFilter(field);
-        this.$buttonList.find('[data-filter-field=' + field + '] input[type=checkbox]').prop('checked', false);
+        var fieldWithSlashes = field;
+
+        if (/\s/.test(field)) { // if field string contains a space character
+            fieldWithSlashes = field.replace(/ /g,"\\ ");
+        }
+        this.$buttonList.find('[data-filter-field=' + fieldWithSlashes + '] input[type=checkbox]').prop('checked', false);
+
         filter.enabled = false;
         if (filter.$dropdown) {
             filter.$dropdown.remove();
